@@ -26,7 +26,7 @@ impl ScrollbarType {
             background: Some(Background::Color(Color::TRANSPARENT)),
             scroller: Scroller {
                 background: Background::Color(Color {
-                    a: ext.alpha_round_borders,
+                    a: ext.alpha_round_borders * 0.65,
                     ..ext.buttons_color
                 }),
                 border: Border {
@@ -64,12 +64,15 @@ impl ScrollbarType {
         let [horizontal_rail, vertical_rail] =
             [is_mouse_over_x, is_mouse_over_y].map(|is_over| Rail {
                 background: Some(Background::Color(Color {
-                    a: ext.alpha_round_borders,
+                    a: ext.alpha_round_borders * 0.45,
                     ..ext.buttons_color
                 })),
                 scroller: Scroller {
                     background: Background::Color(if is_over {
-                        colors.secondary
+                        Color {
+                            a: 0.86,
+                            ..colors.secondary
+                        }
                     } else {
                         mix_colors(colors.secondary, ext.buttons_color)
                     }),
@@ -101,7 +104,7 @@ impl ScrollbarType {
     }
 
     pub fn properties() -> Scrollbar {
-        Scrollbar::new().width(5).scroller_width(5).margin(3)
+        Scrollbar::new().width(6).scroller_width(4).margin(4)
     }
 }
 

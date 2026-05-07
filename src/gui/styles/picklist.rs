@@ -15,7 +15,7 @@ pub enum PicklistType {
     Standard,
 }
 
-const PICKLIST_BORDER_RADIUS: f32 = 8.0;
+const PICKLIST_BORDER_RADIUS: f32 = 12.0;
 
 impl PicklistType {
     #[allow(clippy::unused_self)]
@@ -26,13 +26,23 @@ impl PicklistType {
             text_color: colors.text_body,
             background: Background::Color(mix_colors(ext.buttons_color, colors.primary)),
             border: Border {
-                width: BORDER_WIDTH,
+                width: BORDER_WIDTH / 2.0,
                 radius: PICKLIST_BORDER_RADIUS.into(),
-                color: colors.secondary,
+                color: Color {
+                    a: ext.alpha_round_borders,
+                    ..ext.buttons_color
+                },
             },
             selected_text_color: colors.text_body,
             selected_background: Background::Color(ext.buttons_color),
-            shadow: Shadow::default(),
+            shadow: Shadow {
+                color: Color {
+                    a: 0.24,
+                    ..Color::BLACK
+                },
+                offset: iced::Vector::new(0.0, 2.0),
+                blur_radius: 8.0,
+            },
         }
     }
 }
@@ -49,8 +59,11 @@ impl PicklistType {
             background: Background::Color(mix_colors(ext.buttons_color, colors.primary)),
             border: Border {
                 radius: PICKLIST_BORDER_RADIUS.into(),
-                width: 0.0,
-                color: Color::TRANSPARENT,
+                width: BORDER_WIDTH / 2.0,
+                color: Color {
+                    a: ext.alpha_round_borders * 0.7,
+                    ..ext.buttons_color
+                },
             },
         }
     }
@@ -66,8 +79,11 @@ impl PicklistType {
             background: Background::Color(ext.buttons_color),
             border: Border {
                 radius: PICKLIST_BORDER_RADIUS.into(),
-                width: BORDER_WIDTH,
-                color: colors.secondary,
+                width: BORDER_WIDTH / 2.0,
+                color: Color {
+                    a: 0.85,
+                    ..colors.secondary
+                },
             },
         }
     }

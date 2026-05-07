@@ -33,7 +33,7 @@ use iced::widget::{
     Button, Checkbox, Column, Container, PickList, Row, Scrollable, Space, Text, TextInput, button,
     center, row,
 };
-use iced::{Alignment, Length, Padding, alignment};
+use iced::{Alignment, Element, Length, Padding, alignment};
 use pcap::Address;
 
 /// Computes the body of gui initial page
@@ -93,7 +93,7 @@ fn button_start<'a>(
     )
     .padding(20)
     .width(Length::Fill)
-    .class(ButtonType::Gradient(color_gradient))
+    .class(ButtonType::Start(color_gradient))
     .on_press_maybe(if is_capture_source_consistent {
         Some(Message::Start)
     } else {
@@ -197,12 +197,12 @@ fn get_col_adapter(sniffer: &Sniffer) -> Column<'_, Message, StyleType> {
                             .class(
                                 if let CaptureSource::Device(device) = &sniffer.capture_source {
                                     if name == device.get_name() {
-                                        ButtonType::BorderedRoundSelected
+                                        ButtonType::AdapterCardSelected
                                     } else {
-                                        ButtonType::BorderedRound
+                                        ButtonType::AdapterCard
                                     }
                                 } else {
-                                    ButtonType::BorderedRound
+                                    ButtonType::AdapterCard
                                 },
                             )
                             .on_press(Message::DeviceSelection(name.clone())),
@@ -291,9 +291,9 @@ fn get_col_import_pcap<'a>(
             .width(Length::Fill)
             .padding([20, 30])
             .class(if is_import_pcap_set {
-                ButtonType::BorderedRoundSelected
+                ButtonType::AdapterCardSelected
             } else {
-                ButtonType::BorderedRound
+                ButtonType::AdapterCard
             })
             .on_press(Message::SetPcapImport(path.to_string())),
     )
@@ -302,20 +302,17 @@ fn get_col_import_pcap<'a>(
     Column::new().spacing(5).push(button)
 }
 
-fn get_filters_group<'a>(
-    filters: &Filters,
-    language: Language,
-) -> Container<'a, Message, StyleType> {
+fn get_filters_group<'a>(filters: &Filters, language: Language) -> Element<'a, Message, StyleType> {
     let expanded = filters.expanded();
     let bpf = filters.bpf();
 
     let caption = filter_traffic_translation(language);
-    let checkbox = Checkbox::new(expanded)
-        .label(caption)
-        .on_toggle(move |_| Message::ToggleFilters)
-        .size(18);
-
-    let mut ret_val = Column::new().spacing(10).push(checkbox);
+    let checkbox = Checkbox::new(expanded).label(caption).size(18);
+    let header = button(checkbox)
+        .padding(15)
+        .width(Length::Fill)
+        .class(ButtonType::StartPageOption)
+        .on_press(Message::ToggleFilters);
 
     if expanded {
         let input = TextInput::new("", bpf)
@@ -331,20 +328,20 @@ fn get_filters_group<'a>(
                     .push(Text::new("BPF:"))
                     .push(input),
             );
-        ret_val = ret_val.push(inner_col);
+        Container::new(Column::new().spacing(10).push(header).push(inner_col))
+            .width(Length::Fill)
+            .class(ContainerType::StartPageOption)
+            .into()
+    } else {
+        header.into()
     }
-
-    Container::new(ret_val)
-        .padding(15)
-        .width(Length::Fill)
-        .class(ContainerType::BorderedRound)
 }
 
 fn get_export_pcap_group_maybe<'a>(
     cs_pick: CaptureSourcePicklist,
     export_pcap: &ExportPcap,
     language: Language,
-) -> Option<Container<'a, Message, StyleType>> {
+) -> Option<Element<'a, Message, StyleType>> {
     if cs_pick == CaptureSourcePicklist::File {
         return None;
     }
@@ -354,12 +351,12 @@ fn get_export_pcap_group_maybe<'a>(
     let directory = export_pcap.directory();
 
     let caption = export_capture_translation(language);
-    let checkbox = Checkbox::new(enabled)
-        .label(caption)
-        .on_toggle(move |_| Message::ToggleExportPcap)
-        .size(18);
-
-    let mut ret_val = Column::new().spacing(10).push(checkbox);
+    let checkbox = Checkbox::new(enabled).label(caption).size(18);
+    let header = button(checkbox)
+        .padding(15)
+        .width(Length::Fill)
+        .class(ButtonType::StartPageOption)
+        .on_press(Message::ToggleExportPcap);
 
     if enabled {
         let inner_col = Column::new()
@@ -390,13 +387,13 @@ fn get_export_pcap_group_maybe<'a>(
                         Message::OutputPcapDir,
                     )),
             );
-        ret_val = ret_val.push(inner_col);
+        Some(
+            Container::new(Column::new().spacing(10).push(header).push(inner_col))
+                .width(Length::Fill)
+                .class(ContainerType::StartPageOption)
+                .into(),
+        )
+    } else {
+        Some(header.into())
     }
-
-    Some(
-        Container::new(ret_val)
-            .padding(15)
-            .width(Length::Fill)
-            .class(ContainerType::BorderedRound),
-    )
 }

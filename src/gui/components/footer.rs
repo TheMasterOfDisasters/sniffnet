@@ -98,6 +98,7 @@ fn get_button_roadmap<'a>() -> Tooltip<'a, Message, StyleType> {
     .padding(Padding::ZERO.top(2))
     .height(30)
     .width(30)
+    .class(ButtonType::IconAction)
     .on_press(Message::OpenWebPage(WebPage::Roadmap));
 
     Tooltip::new(content, row_open_link_tooltip("Roadmap"), Position::Top)
@@ -118,6 +119,7 @@ fn get_button_wiki<'a>() -> Tooltip<'a, Message, StyleType> {
     .padding(Padding::ZERO.top(1))
     .height(35)
     .width(35)
+    .class(ButtonType::IconAction)
     .on_press(Message::OpenWebPage(WebPage::Wiki));
 
     Tooltip::new(content, row_open_link_tooltip("Wiki"), Position::Top)
@@ -137,6 +139,7 @@ fn get_button_github<'a>() -> Tooltip<'a, Message, StyleType> {
     )
     .height(40)
     .width(40)
+    .class(ButtonType::IconAction)
     .on_press(Message::OpenWebPage(WebPage::Repo));
 
     Tooltip::new(content, row_open_link_tooltip("GitHub"), Position::Top)
@@ -156,6 +159,7 @@ fn get_button_news<'a>() -> Tooltip<'a, Message, StyleType> {
     )
     .height(35)
     .width(35)
+    .class(ButtonType::IconAction)
     .on_press(Message::OpenWebPage(WebPage::WebsiteNews));
 
     Tooltip::new(content, row_open_link_tooltip("News"), Position::Top)
@@ -176,6 +180,7 @@ fn get_button_sponsor<'a>() -> Tooltip<'a, Message, StyleType> {
     .padding(Padding::ZERO.top(2))
     .height(30)
     .width(30)
+    .class(ButtonType::IconAction)
     .on_press(Message::OpenWebPage(WebPage::WebsiteSponsor));
 
     Tooltip::new(content, row_open_link_tooltip("Sponsor"), Position::Top)

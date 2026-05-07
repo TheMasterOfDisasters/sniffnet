@@ -3,7 +3,7 @@
 #![allow(clippy::module_name_repetitions)]
 
 use iced::widget::checkbox::{Catalog, Status, Style};
-use iced::{Background, Border};
+use iced::{Background, Border, Color};
 
 use crate::StyleType;
 use crate::gui::styles::style_constants::BORDER_WIDTH;
@@ -22,23 +22,44 @@ impl CheckboxType {
         let colors = style.get_palette();
         let ext = style.get_extension();
         Style {
-            background: Background::Color(ext.buttons_color),
+            background: Background::Color(if is_checked {
+                ext.buttons_color
+            } else {
+                Color {
+                    a: ext.alpha_round_containers,
+                    ..ext.buttons_color
+                }
+            }),
             icon_color: colors.text_body,
             border: Border {
                 radius: CHECKBOX_BORDER_RADIUS.into(),
-                width: if is_checked { BORDER_WIDTH } else { 0.0 },
-                color: colors.secondary,
+                width: if is_checked {
+                    BORDER_WIDTH
+                } else {
+                    BORDER_WIDTH / 2.0
+                },
+                color: if is_checked {
+                    colors.secondary
+                } else {
+                    Color {
+                        a: ext.alpha_round_borders,
+                        ..ext.buttons_color
+                    }
+                },
             },
             text_color: None,
         }
     }
 
     #[allow(clippy::unused_self)]
-    fn hovered(&self, style: &StyleType, _is_checked: bool) -> Style {
+    fn hovered(&self, style: &StyleType, is_checked: bool) -> Style {
         let colors = style.get_palette();
         let ext = style.get_extension();
         Style {
-            background: Background::Color(ext.buttons_color),
+            background: Background::Color(Color {
+                a: if is_checked { 1.0 } else { 0.35 },
+                ..ext.buttons_color
+            }),
             icon_color: colors.text_body,
             border: Border {
                 radius: CHECKBOX_BORDER_RADIUS.into(),

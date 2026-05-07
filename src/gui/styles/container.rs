@@ -15,6 +15,7 @@ pub enum ContainerType {
     #[default]
     Standard,
     BorderedRound,
+    StartPageOption,
     Tooltip,
     Badge,
     BadgeInfo,
@@ -45,6 +46,10 @@ impl ContainerType {
                     a: ext.alpha_round_containers,
                     ..ext.buttons_color
                 }),
+                ContainerType::StartPageOption => Background::Color(Color {
+                    a: if ext.is_nightly { 0.16 } else { 0.28 },
+                    ..ext.buttons_color
+                }),
                 ContainerType::Badge | ContainerType::BadgeInfo => Background::Color(Color {
                     a: ext.alpha_chart_badge,
                     ..colors.secondary
@@ -69,7 +74,9 @@ impl ContainerType {
             }),
             border: Border {
                 radius: match self {
-                    ContainerType::BorderedRound => BORDER_ROUNDED_RADIUS.into(),
+                    ContainerType::BorderedRound | ContainerType::StartPageOption => {
+                        BORDER_ROUNDED_RADIUS.into()
+                    }
                     ContainerType::Modal => Radius::new(0).bottom(BORDER_ROUNDED_RADIUS),
                     ContainerType::Tooltip => 7.0.into(),
                     ContainerType::Badge
@@ -87,6 +94,7 @@ impl ContainerType {
                     | ContainerType::Highlighted => 0.0,
                     ContainerType::Tooltip => BORDER_WIDTH / 2.0,
                     ContainerType::BorderedRound => BORDER_WIDTH * 2.0,
+                    ContainerType::StartPageOption => BORDER_WIDTH / 2.0,
                     _ => BORDER_WIDTH,
                 },
                 color: match self {
@@ -94,13 +102,27 @@ impl ContainerType {
                     ContainerType::Palette => Color::BLACK,
                     ContainerType::BadgeInfo => colors.secondary,
                     ContainerType::Modal => ext.buttons_color,
+                    ContainerType::StartPageOption => Color {
+                        a: ext.alpha_round_borders * 0.9,
+                        ..ext.buttons_color
+                    },
                     _ => Color {
                         a: ext.alpha_round_borders,
                         ..ext.buttons_color
                     },
                 },
             },
-            shadow: Shadow::default(),
+            shadow: match self {
+                ContainerType::StartPageOption => Shadow {
+                    color: Color {
+                        a: 0.18,
+                        ..Color::BLACK
+                    },
+                    offset: iced::Vector::new(0.0, 1.0),
+                    blur_radius: 4.0,
+                },
+                _ => Shadow::default(),
+            },
             snap: true,
         }
     }

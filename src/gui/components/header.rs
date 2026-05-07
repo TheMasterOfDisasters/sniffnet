@@ -118,6 +118,7 @@ pub fn get_button_settings<'a>(
     .padding(0)
     .height(40)
     .width(60)
+    .class(ButtonType::IconAction)
     .on_press(Message::OpenSettings(open_overlay));
 
     Tooltip::new(
